@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "136317661996",
+    "project_id": "tet-store",
+    "storage_bucket": "tet-store.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:136317661996:android:eee2aeee2676b5940f3289",
+        "android_client_info": {
+          "package_name": "com.example.tet_store"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuZd5jYfbSl3dh7eNM6FcBH__bTr2bDrQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
