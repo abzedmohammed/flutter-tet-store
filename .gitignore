@@ -43,8 +43,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/app/google-services.json
 
 .env
+
+
 
 # flutter run -d web-server --web-hostname 0.0.0.0 --web-port 8080
 # flutter clean

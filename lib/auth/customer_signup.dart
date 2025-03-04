@@ -1,7 +1,6 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,7 +12,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tet_store/utilities/notification_handler.dart';
 import 'package:tet_store/utilities/utils.dart';
 import 'package:tet_store/widgets/auth_widgets.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
+
+final dio = Dio();
 
 String apiUrl = dotenv.env['API_URL'] ?? '';
 
@@ -36,7 +37,10 @@ class _CustomerSignupState extends State<CustomerSignup> {
   CollectionReference customer = FirebaseFirestore.instance.collection(
     'customers',
   );
-  final url = Uri.parse('$apiUrl/api/user/create');
+  bool isProcessing = false;
+
+  final url = '$apiUrl/api/user/create';
+  final uploadUrl = '$apiUrl/api/upload';
 
   void _pickImageFromCamera() async {
     try {
@@ -76,43 +80,62 @@ class _CustomerSignupState extends State<CustomerSignup> {
     if (_formKey.currentState!.validate()) {
       if (_imageFile != null) {
         try {
+          setState(() {
+            isProcessing = true;
+          });
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: _email,
             password: _password,
           );
 
-          final response = await http.post(
-            url,
-            headers: {
-              "Content-Type": "application/json", // ✅ Specify JSON content type
-              "Accept": "application/json",
-            },
-            body: jsonEncode({
-              'usrNames': _name,
-              'usrEmail': _email,
-              'usrAvatar': _imageFile!.path.toString(),
-              'usrPhone': '',
-              'usrAddress': '',
-              'usrCid': FirebaseAuth.instance.currentUser!.uid,
-            }),
-          );
+          final formData = FormData.fromMap({
+            'file': await MultipartFile.fromFile(
+              _imageFile!.path,
+              filename: _imageFile!.name,
+            ),
+          });
+          final fileResponseBody = await dio.post(uploadUrl, data: formData);
 
-          final responseBody = json.decode(response.body);
+          if (fileResponseBody.data['success'] == true) {
+            final response = await dio.post(
+              url,
+              data: {
+                'usrNames': _name,
+                'usrEmail': _email,
+                'usrAvatar': fileResponseBody.data['data']['result'],
+                'usrPhone': '',
+                'usrAddress': '',
+                'usrCid': FirebaseAuth.instance.currentUser!.uid,
+              },
+            );
 
-          if (!mounted) return;
+            if (!mounted) return;
 
-          if (responseBody['success'] == true) {
-            _formKey.currentState!.reset();
-            setState(() {
-              _imageFile = null;
-            });
-            Navigator.of(context).pushReplacementNamed('/customer_home');
+            if (response.data['success'] == true) {
+              _formKey.currentState!.reset();
+              setState(() {
+                _imageFile = null;
+              });
+              Navigator.of(context).pushReplacementNamed('/customer_home');
+            } else {
+              MyMessageHandler.showSnackBar(
+                _scaffoldKey,
+                response.data['messages']['message'],
+              );
+              FirebaseAuth.instance.currentUser!.delete();
+              setState(() {
+                isProcessing = false;
+              });
+            }
           } else {
             MyMessageHandler.showSnackBar(
               _scaffoldKey,
-              responseBody['messages']['message'],
+              fileResponseBody.data['messages']['message'],
             );
             FirebaseAuth.instance.currentUser!.delete();
+            setState(() {
+              isProcessing = false;
+            });
           }
         } on FirebaseAuthException catch (e) {
           if (e.code == 'email-already-in-use') {
@@ -130,6 +153,9 @@ class _CustomerSignupState extends State<CustomerSignup> {
               _scaffoldKey,
               'An error has occured please try again later',
             );
+            setState(() {
+              isProcessing = false;
+            });
           }
         }
       } else {
@@ -287,12 +313,15 @@ class _CustomerSignupState extends State<CustomerSignup> {
                         actionLabel: 'Sign In',
                         onPressed: () {},
                       ),
-                      AuthMainButton(
-                        mainButtonLabel: 'Sign Up',
-                        onPressed: () {
-                          _signUp();
-                        },
-                      ),
+
+                      isProcessing
+                          ? CircularProgressIndicator()
+                          : AuthMainButton(
+                            mainButtonLabel: 'Sign Up',
+                            onPressed: () {
+                              _signUp();
+                            },
+                          ),
                     ],
                   ),
                 ),
