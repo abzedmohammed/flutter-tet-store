@@ -17,14 +17,14 @@ final dio = Dio();
 
 String apiUrl = dotenv.env['API_URL'] ?? '';
 
-class CustomerSignup extends StatefulWidget {
-  const CustomerSignup({super.key});
+class SupplierSignup extends StatefulWidget {
+  const SupplierSignup({super.key});
 
   @override
-  State<CustomerSignup> createState() => _CustomerSignupState();
+  State<SupplierSignup> createState() => _SupplierSignupState();
 }
 
-class _CustomerSignupState extends State<CustomerSignup> {
+class _SupplierSignupState extends State<SupplierSignup> {
   bool passwordVisible = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
@@ -105,7 +105,7 @@ class _CustomerSignupState extends State<CustomerSignup> {
                 'usrPhone': '',
                 'usrAddress': '',
                 'usrCid': FirebaseAuth.instance.currentUser!.uid,
-                'usrType': 'CUSTOMER',
+                'usrType': 'SUPPLIER',
               },
             );
 
@@ -116,7 +116,7 @@ class _CustomerSignupState extends State<CustomerSignup> {
               setState(() {
                 _imageFile = null;
               });
-              Navigator.of(context).pushReplacementNamed('/customer_home');
+              Navigator.of(context).pushReplacementNamed('/supplier_home');
             } else {
               MyMessageHandler.showSnackBar(
                 _scaffoldKey,
@@ -182,7 +182,7 @@ class _CustomerSignupState extends State<CustomerSignup> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      AuthHeaderLabel(headerLabel: 'Sign Up'),
+                      AuthHeaderLabel(headerLabel: 'Supplier Sign Up'),
                       Row(
                         children: [
                           Padding(
@@ -242,14 +242,14 @@ class _CustomerSignupState extends State<CustomerSignup> {
                           onChanged: (value) => _name = value,
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return 'Please enter your full name';
+                              return 'Please enter store name';
                             }
                             return null;
                           },
                           decoration: textFormDecoration.copyWith(
-                            labelText: 'Full Name',
+                            labelText: 'Store Name',
                             prefixIcon: Icon(Icons.person),
-                            hintText: 'Enter your full name',
+                            hintText: 'Enter store name',
                           ),
                         ),
                       ),
@@ -312,7 +312,7 @@ class _CustomerSignupState extends State<CustomerSignup> {
                         haveAccount: 'Already have an account?',
                         actionLabel: 'Sign In',
                         onPressed: () {
-                          Navigator.of(context).pushReplacementNamed('/customer_login');
+                          Navigator.of(context).pushReplacementNamed('/supplier_login');
                         },
                       ),
 

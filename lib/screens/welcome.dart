@@ -155,7 +155,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                               onPressed: () {
                                 Navigator.of(
                                   context,
-                                ).pushReplacementNamed('/supplier_home');
+                                ).pushReplacementNamed('/supplier_login');
                               },
                             ),
                             Padding(
@@ -163,7 +163,11 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                               child: YellowButton(
                                 width: .30,
                                 label: 'Sign Up',
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.of(
+                                  context,
+                                ).pushReplacementNamed('/supplier_signup');
+                                },
                               ),
                             ),
                           ],
@@ -198,7 +202,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                             onPressed: () {
                               Navigator.of(
                                 context,
-                              ).pushReplacementNamed('/customer_home');
+                              ).pushReplacementNamed('/customer_login');
                             },
                           ),
                         ),

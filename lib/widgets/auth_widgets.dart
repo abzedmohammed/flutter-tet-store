@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class AuthMainButton extends StatelessWidget {
@@ -22,7 +21,7 @@ class AuthMainButton extends StatelessWidget {
           minWidth: double.infinity,
           onPressed: onPressed,
           child: Text(
-            'Sign Up',
+            mainButtonLabel,
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -83,11 +82,17 @@ class AuthHeaderLabel extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            headerLabel,
-            style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+          SizedBox(
+            width: 200, // Ensures text has space to wrap
+            child: Text(
+              headerLabel,
+              style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+              softWrap: true,
+            ),
           ),
+
           IconButton(
             onPressed: () {
               Navigator.of(context).pushReplacementNamed('/weclome_screen');

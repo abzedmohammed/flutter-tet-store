@@ -3,6 +3,7 @@ import 'package:tet_store/screens/category.dart';
 import 'package:tet_store/screens/dashboard.dart';
 import 'package:tet_store/screens/home.dart';
 import 'package:tet_store/screens/store.dart';
+import 'package:tet_store/screens/upload_product.dart';
 
 class SuplierHomeScreen extends StatefulWidget {
   const SuplierHomeScreen({super.key});
@@ -18,7 +19,7 @@ class _SuplierHomeScreenState extends State<SuplierHomeScreen> {
     CategoryScreen(),
     StoreScreen(),
     DashboardScreen(),
-    Center(child: Text('Upload'),)
+    UploadProductScreen(),
   ];
 
   @override
